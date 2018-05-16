@@ -1,7 +1,7 @@
 gavant-ember-websockets
 ==============================================================================
 
-[Short description of the addon.]
+Basic websockets support for ember applications, using sock.js and the STOMP messaging protocol via the stomp.js client.
 
 Installation
 ------------------------------------------------------------------------------
@@ -10,12 +10,36 @@ Installation
 ember install gavant-ember-websockets
 ```
 
+[TODO - environment config options]
 
 Usage
 ------------------------------------------------------------------------------
 
-[Longer description of how to use the addon in apps.]
+### `Socket` Service
 
+[TODO - connect(), subscribe()/unsubscribe()]
+
+### `ClientIdentity` Service
+
+[TODO - adding to ember-data adapter, ajax service, authenticator headers]
+
+[TODO - is there a better, more global way we can add a header to ALL ajax requests, regardless of source?]
+
+### `ApplicationRouteMixin`
+
+[TODO - socket connection, global events subscription]
+
+### `ApplicationControllerMixin`
+
+[TODO - websockets query param]
+
+### `GlobalSocketEventMixin`
+
+[TODO - brief mention, should be included in ApplicationRouteMixin]
+
+### `ModelSocketEventMixin`
+
+[TODO - using to handle standard ember-data model events]
 
 Contributing
 ------------------------------------------------------------------------------
