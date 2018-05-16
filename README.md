@@ -12,6 +12,24 @@ ember install gavant-ember-websockets
 
 [TODO - environment config options]
 
+```js
+let ENV = {
+    //other environment configs...
+    websockets: {
+        //display verbose sock.js logs in the dev tools console
+        debug: true,
+        //user must have an authenticated session to connect
+        requiresAuth: true,
+        //the global socket channel path for app-wide socket events
+        //if there is no global channel, set this to false
+        globalChannel: '/topic/global',
+        //the name of the request header sent in all AJAX requests
+        //that uniquely identify the originating browser/client
+        clientUUIDHeader: 'x-client-uuid'
+    }
+}
+```
+
 Usage
 ------------------------------------------------------------------------------
 
