@@ -1,7 +1,7 @@
 import Service from '@ember/service';
+import Evented from '@ember/object/evented';
 import { get, set, setProperties, computed } from '@ember/object';
 import { tryInvoke } from '@ember/utils';
-import { inject as service } from '@ember/service';
 import { later, cancel } from '@ember/runloop';
 import { A } from '@ember/array';
 import { Promise } from 'rsvp';
@@ -9,10 +9,9 @@ import safeInjectService from '../macros/safe-inject-service';
 import Configuration from './../configuration';
 
 
-export default Service.extend({
+export default Service.extend(Evented, {
     session: safeInjectService('session'),
     fastboot: safeInjectService('fastboot'),
-    eventBus: service(),
 
     //configs
     baseURL: Configuration.baseURL,
@@ -27,7 +26,7 @@ export default Service.extend({
     lostConnection: false,
 
     showDisconnect: computed('reconnectDelayStep', 'showDisconnectAtStep', function() {
-        return get(this, 'reconnectDelayStep') >= get(this, 'showDisconnectAtStep')
+        return get(this, 'reconnectDelayStep') >= get(this, 'showDisconnectAtStep');
     }),
 
     init() {
@@ -80,7 +79,7 @@ export default Service.extend({
 
                 client.connect({},
                     () => {
-                        get(this, 'eventBus').publish('socketConnected');
+                        this.trigger('connected');
                         set(this, 'lostConnection', false);
                         setProperties(this, {
                             lostConnection: false,
@@ -95,7 +94,7 @@ export default Service.extend({
                         const numSteps = get(this, 'reconnectDelaySteps.length');
                         //keep increasing the reconnect delay, until the max delay is reached
                         const reconnectDelayStep = (reconnectStep === numSteps - 1) ? reconnectStep : (reconnectStep + 1);
-                        get(this, 'eventBus').publish('socketDisconnected', error);
+                        this.trigger('disconnected', error);
                         this.scheduleReconnect();
                         setProperties(this, {
                             lostConnection: true,
@@ -111,15 +110,11 @@ export default Service.extend({
     },
 
     async reconnect() {
-        let result = await this.connect();
+        const result = await this.connect();
         //attempt to restore existing subscriptions
-        let subscriptions = get(this, 'subscriptions');
-        for(let channel in subscriptions) {
-            if(subscriptions.hasOwnProperty(channel)) {
-                this.subscribe(channel, subscriptions[channel].callback);
-            }
-        }
-
+        const subscriptions = get(this, 'subscriptions');
+        const channels = Object.keys(subscriptions);
+        channels.forEach(channel => this.subscribe(channel, get(subscriptions, `${channel}.callback`)));
         return result;
     },
 

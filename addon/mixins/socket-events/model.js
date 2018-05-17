@@ -7,7 +7,6 @@ import Configuration from './../../configuration';
 export default Mixin.create({
     socket: service(),
     clientIdentity: service(),
-    eventBus: service(),
     modelDateField: Configuration.modelDateField,
 
     handleModelEvent(message, modelName) {
@@ -52,7 +51,7 @@ export default Mixin.create({
                     break;
             }
 
-            get(this, 'eventBus').publish('websocketModelUpdate', method, modelName, modelJson, existingModel);
+            get(this, 'socket').trigger('modelReceived', method, modelName, modelJson, existingModel);
             return body;
         } catch(error) {
             return reject(error);

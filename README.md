@@ -88,6 +88,11 @@ export default Route.extend({
 });
 ```
 
+The Socket service also mixes in `@ember/object/evented`, and triggers the following events which can be listened to:
+
+- `connected` - a websocket connection is successfully established
+- `disconnected` - the websocket connection was lost (passes an error object with the event)
+
 ### `ClientIdentity` Service
 
 Implements a mechanism for uniquely identifying every app instance/browser client, which can be sent in AJAX request headers to the API. The API can then return this UUID value in socket events, which the addon's `ModelSocketEventMixin` uses to ignore events that originated from the user that caused them.
@@ -198,6 +203,20 @@ export default Route.extend(ModelSocketEventsMixin, {
             this.stopListeningForEvents();
         }
     }
+});
+```
+
+The ModelSocketEventsMixin also triggers an event, `modelReceived` on the Socket service when an event is received, so that other parts of your application can execute logic when this happens:
+
+```js
+get(this, 'socket').on('modelReceived', this, (method, modelName, modelJson, existingModel) => {
+    //do something with the received model event
+    console.log(method, modelName, modelJson, existingModel);
+    //=>
+    //"POST|PUT|DELETE"
+    //"someModel"
+    //{id: 999, ...}
+    //DS.Model instance
 });
 ```
 
