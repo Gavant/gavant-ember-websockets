@@ -12,8 +12,7 @@ export default Service.extend({
     uuidHeader: computed('uuid', 'uuidHeaderName', function() {
         const uuid = get(this, 'uuid');
         const headerName = get(this, 'uuidHeaderName');
-        const header = {[headerName]: uuid};
-        return header;
+        return {[headerName]: uuid};
     }),
 
     generateUUID() {

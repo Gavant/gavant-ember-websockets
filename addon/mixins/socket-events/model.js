@@ -1,16 +1,13 @@
 import Mixin from '@ember/object/mixin';
-import Ember from 'ember';
-import moment from 'moment';
-
-const {
-    get,
-    inject: { service },
-    RSVP: { reject }
-} = Ember;
+import { get, getWithDefault } from '@ember/object';
+import { inject as service } from '@ember/service';
+import { reject } from 'rsvp';
+import ENV from './../configuration';
 
 export default Mixin.create({
     eventBus: service(),
     clientIdentity: service(),
+    modelDateField: getWithDefault(ENV, 'websockets.modelDateField', 'dateModified'),
 
     handleModelEvent(message, modelName) {
         try {
@@ -24,13 +21,21 @@ export default Mixin.create({
 
             const method = get(body, 'method');
             const modelJson = get(body, modelName);
+            const dateField = get(this, 'modelDateField');
             let existingModel = get(this, 'store').peekRecord(modelName, get(modelJson, 'id'));
 
             switch(method) {
                 case 'POST':
-                case 'PUT':
+                case 'PUT': {
                     //only update the locally cached model if the received model is newer
-                    if(!existingModel || moment(get(modelJson, 'dateModified')).isAfter(get(existingModel, 'dateModified'))) {
+                    let modelIsNewer = true;
+                    if(dateField) {
+                        const existingModelDate = get(existingModel, dateField);
+                        const newModelDate = new Date(get(modelJson, dateField));
+                        modelIsNewer = newModelDate >= existingModelDate;
+                    }
+                    
+                    if(!existingModel || modelIsNewer) {
                         get(this, 'store').pushPayload(modelName, {[modelName]: modelJson});
                         //get the newly created ED model so it can be passed in the published event
                         if(!existingModel) {
@@ -38,6 +43,7 @@ export default Mixin.create({
                         }
                     }
                     break;
+                }
                 case 'DELETE':
                     if(existingModel) {
                         get(this, 'store').unloadRecord(existingModel);

@@ -6,7 +6,6 @@ import { later, cancel } from '@ember/runloop';
 import { Promise } from 'rsvp';
 import safeInjectService from '../macros/safe-inject-service';
 import ENV from './../configuration';
-// import moment from 'moment';
 
 
 export default Service.extend({
@@ -15,6 +14,8 @@ export default Service.extend({
     eventBus: service(),
 
     //configs
+    debug: getWithDefault(ENV, 'websockets.debug', true),
+    hostUrl: getWithDefault(ENV, 'websockets.host', ''),
     requiresAuth: getWithDefault(ENV, 'websockets.requiresAuth', true),
     reconnectDelaySteps: getWithDefault(ENV, 'websockets.reconnectDelaySteps', [1000, 2000, 5000, 10000, 30000, 60000]),
 
@@ -33,15 +34,19 @@ export default Service.extend({
         set(this, 'subscriptions', {});
     },
 
-    host: computed('session.data.authenticated.access_token', function() {
+    host: computed('hostUrl', 'requiresAuth', 'session.data.authenticated.access_token', function() {
+        let host = get(this, 'hostUrl');
         const token = get(this, 'session.data.authenticated.access_token');
-        //TODO make a config var
-        return `${ENV.RESTAPI}/ws?access_token=${token}`;
+        const requiresAuth = get(this, 'requiresAuth');
+        if(requiresAuth && token) {
+            host += `?access_token=${token}`;
+        }
+
+        return host;
     }),
 
     connect() {
-        const requiresAuth = get(this, 'socket.requiresAuth');
-        if(!get(this, 'fastboot.isFastBoot') && (!requiresAuth || get(this, 'session.isAuthenticated'))) {
+        if(!get(this, 'fastboot.isFastBoot')) {
             return new Promise((resolve, reject) => {
                 //dont attempt to connect if already connected
                 //or in the process of connecting
@@ -56,8 +61,15 @@ export default Service.extend({
                 const client = Stomp.over(() => {
                     return new SockJS(get(this, 'host'));
                 });
+
                 //handling implementation of auto-reconnect in the app (to support event notifications)
                 client.reconnect_delay = 0;
+
+                //allow console log debug output to be disabled
+                if(!get(this, 'debug')) {
+                    client.debug = null;
+                }
+
                 cancel(get(this, 'reconnectTimer'));
                 setProperties(this, {
                     reconnectOnDate: null,
@@ -114,8 +126,8 @@ export default Service.extend({
         cancel(get(this, 'reconnectTimer'));
         const delay = get(this, 'reconnectDelaySteps').objectAt(get(this, 'reconnectDelayStep'));
         const reconnectTimer = later(this, 'reconnect', delay);
-        //TODO use a native Date().getTime()
-        const reconnectOnDate = moment().add(delay, 'ms');
+        const reconnectOnDate = new Date();
+        reconnectOnDate.setTime(new Date().getTime() + delay);
         setProperties(this, {
             reconnectOnDate,
             reconnectTimer

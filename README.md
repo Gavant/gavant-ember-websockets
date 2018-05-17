@@ -16,16 +16,27 @@ ember install gavant-ember-websockets
 let ENV = {
     //other environment configs...
     websockets: {
+        //the endpoint url used to make the socket connection,
+        //typically this is an endpoint on the app's main API host
+        host: '',
         //display verbose sock.js logs in the dev tools console
         debug: true,
         //user must have an authenticated session to connect
         requiresAuth: true,
+        //the intervals at which successive reconnect attempts
+        //are made when the socket is disconnected
+        reconnectDelaySteps: [1000, 2000, 5000, 10000, 30000, 60000],
         //the global socket channel path for app-wide socket events
         //if there is no global channel, set this to false
         globalChannel: '/topic/global',
         //the name of the request header sent in all AJAX requests
         //that uniquely identify the originating browser/client
-        clientUUIDHeader: 'x-client-uuid'
+        clientUUIDHeader: 'x-client-uuid',
+        //the name of the property in ember-data models that hold
+        //the date the record was last modified. used by ModelSocketEventMixin
+        //to determine if received model data should be pushed into the store
+        //set to false to disable this behavior
+        modelDateField: 'dateModified'
     }
 }
 ```
