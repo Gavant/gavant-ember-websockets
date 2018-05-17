@@ -14,13 +14,13 @@ export default Mixin.create(GlobalSocketEventMixin, {
         const requiresAuth = get(this, 'socket.requiresAuth');
         //allow the app's websocket connection to be conditionally turned off when the app is loaded
         //this is useful in non-browser rendering environments when a socket connection is not desired
-        const enableWebsockets = get(transition, 'queryParams.websockets');
+        const enableWebsockets = get(transition, 'queryParams.websockets') !== 'false';
 
         //store the websockets query param value so we can check it later
         // in sessionAuthenticated() if the user is not yet logged in
         set(this, 'enableWebsockets', enableWebsockets);
 
-        if(enableWebsockets !== false && (!requiresAuth || get(this, 'session.isAuthenticated'))) {
+        if(enableWebsockets && (!requiresAuth || get(this, 'session.isAuthenticated'))) {
             try {
                 await get(this, 'socket').connect();
                 //immediately establish a subscription to the global channel
@@ -39,7 +39,7 @@ export default Mixin.create(GlobalSocketEventMixin, {
         const requiresAuth = get(this, 'socket.requiresAuth');
         const enableWebsockets = get(this, 'enableWebsockets');
 
-        if(enableWebsockets !== false && requiresAuth) {
+        if(enableWebsockets && requiresAuth) {
             try {
                 await get(this, 'socket').connect();
                 //immediately establish a subscription to the global channel
