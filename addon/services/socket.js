@@ -1,11 +1,11 @@
 import Service from '@ember/service';
-import { get, getWithDefault, set, setProperties, computed } from '@ember/object';
+import { get, set, setProperties, computed } from '@ember/object';
 import { tryInvoke } from '@ember/utils';
 import { inject as service } from '@ember/service';
 import { later, cancel } from '@ember/runloop';
 import { Promise } from 'rsvp';
 import safeInjectService from '../macros/safe-inject-service';
-import ENV from './../configuration';
+import Configuration from './../configuration';
 
 
 export default Service.extend({
@@ -14,10 +14,10 @@ export default Service.extend({
     eventBus: service(),
 
     //configs
-    debug: getWithDefault(ENV, 'websockets.debug', true),
-    hostUrl: getWithDefault(ENV, 'websockets.host', ''),
-    requiresAuth: getWithDefault(ENV, 'websockets.requiresAuth', true),
-    reconnectDelaySteps: getWithDefault(ENV, 'websockets.reconnectDelaySteps', [1000, 2000, 5000, 10000, 30000, 60000]),
+    baseURL: Configuration.baseURL,
+    requiresAuth: Configuration.requiresAuth,
+    debug: Configuration.debug,
+    reconnectDelaySteps: Configuration.reconnectDelaySteps,
 
     reconnectDelayStep: 0,
     showDisconnectAtStep: 4,

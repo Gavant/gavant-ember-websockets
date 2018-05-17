@@ -1,9 +1,9 @@
 import Service from '@ember/service';
-import { get, getWithDefault, computed } from '@ember/object';
-import ENV from './../configuration';
+import { get, computed } from '@ember/object';
+import Configuration from './../configuration';
 
 export default Service.extend({
-    uuidHeaderName: getWithDefault(ENV, 'websockets.clientUUIDHeader', 'x-client-uuid'),
+    uuidHeaderName: Configuration.clientUUIDHeader,
 
     uuid: computed(function() {
         return this.generateUUID();

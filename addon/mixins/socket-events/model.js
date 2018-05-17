@@ -1,14 +1,14 @@
 import Mixin from '@ember/object/mixin';
-import { get, getWithDefault } from '@ember/object';
+import { get } from '@ember/object';
 import { inject as service } from '@ember/service';
 import { reject } from 'rsvp';
-import ENV from './../configuration';
+import Configuration from './../../configuration';
 
 export default Mixin.create({
     socket: service(),
     clientIdentity: service(),
     eventBus: service(),
-    modelDateField: getWithDefault(ENV, 'websockets.modelDateField', 'dateModified'),
+    modelDateField: Configuration.modelDateField,
 
     handleModelEvent(message, modelName) {
         try {
