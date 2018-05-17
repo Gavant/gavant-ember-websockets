@@ -10,11 +10,13 @@ Installation
 ember install gavant-ember-websockets
 ```
 
-[TODO - environment config options]
+Add the settings below (shown with default values) to your app's config/environment.js to configure the addon. At the very least, you will need to set the `websockets.host` value to point to an API endpoint URL.
 
 ```js
 let ENV = {
+
     //other environment configs...
+
     websockets: {
         //the endpoint url used to make the socket connection,
         //typically this is an endpoint on the app's main API host
@@ -46,9 +48,11 @@ Usage
 
 ### `Socket` Service
 
-[TODO - connect(), subscribe()/unsubscribe()]
+The primary service provided by the addon, it is used to make a websocket connection, and subscribe to socket channels.
 
 ### `ClientIdentity` Service
+
+Implements a mechanism for uniquely identifying every app instance/browser client, which can be sent in AJAX request headers to the API. The API can then return this UUID value in socket events, which the addon's `ModelSocketEventMixin` uses to ignore events that originated from the user that caused them.
 
 [TODO - adding to ember-data adapter, ajax service, authenticator headers]
 
@@ -56,19 +60,65 @@ Usage
 
 ### `ApplicationRouteMixin`
 
-[TODO - socket connection, global events subscription]
+This mixin should be applied to the `application/route`. It sets up the standard boilerplate logic for making a socket connection on app boot/login, and subscribing the the global events channel.
+
+```js
+import ApplicationRouteMixin from 'gavant-ember-websockets/mixins/application-route-mixin';
+```
 
 ### `ApplicationControllerMixin`
 
-[TODO - websockets query param]
+This mixin should be applied to the `application/controller`. It simply adds a `websockets` query param, which can be used to disable socket connections when visiting the app with `?websockets=false` in the URL.
 
-### `GlobalSocketEventMixin`
+```js
+import ApplicationControllerMixin from 'gavant-ember-websockets/mixins/application-controller-mixin';
+```
 
-[TODO - brief mention, should be included in ApplicationRouteMixin]
+### `GlobalSocketEventsMixin`
 
-### `ModelSocketEventMixin`
+Subscribes to the global events channel. This is used by the `ApplicationRouteMixin` and generally should not need to be used directly.
 
-[TODO - using to handle standard ember-data model events]
+```js
+import GlobalSocketEventsMixin from 'gavant-ember-websockets/mixins/socket-events/global';
+```
+
+### `ModelSocketEventsMixin`
+
+Implements common logic used for handling socket events which send changes to ember-data models. It expects socket events to follow a standard REST-like pattern to identify record create/update/delete events. Generally, you will use this in a Route in the following manner:
+
+```js
+import ModelSocketEventsMixin from 'gavant-ember-websockets/mixins/socket-events/model';
+
+export default Route.extend(ModelSocketEventsMixin, {
+    myChannelName: '/topic/my-channel-name',
+
+    listenForEvents() {
+        const channel = get(this, 'myChannelName');
+        const listener = bind(this, 'onSocketEvent');
+        get(this, 'socket').subscribe(channel, listener);
+    },
+
+    stopListeningForEvents() {
+        get(this, 'socket').unsubscribe(get(this, 'myChannelName'));
+    },
+
+    onSocketEvent(message) {
+        this.handleModelEvent(message, 'modelName');
+    },
+
+    afterModel() {
+        this._super(...arguments);
+        this.listenForEvents();
+    },
+
+    resetController(controller, isExiting) {
+        this._super(...arguments);
+        if(isExiting) {
+            this.stopListeningForEvents();
+        }
+    }
+});
+```
 
 Contributing
 ------------------------------------------------------------------------------

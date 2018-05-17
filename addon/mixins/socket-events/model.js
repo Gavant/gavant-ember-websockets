@@ -5,8 +5,9 @@ import { reject } from 'rsvp';
 import ENV from './../configuration';
 
 export default Mixin.create({
-    eventBus: service(),
+    socket: service(),
     clientIdentity: service(),
+    eventBus: service(),
     modelDateField: getWithDefault(ENV, 'websockets.modelDateField', 'dateModified'),
 
     handleModelEvent(message, modelName) {
@@ -34,7 +35,7 @@ export default Mixin.create({
                         const newModelDate = new Date(get(modelJson, dateField));
                         modelIsNewer = newModelDate >= existingModelDate;
                     }
-                    
+
                     if(!existingModel || modelIsNewer) {
                         get(this, 'store').pushPayload(modelName, {[modelName]: modelJson});
                         //get the newly created ED model so it can be passed in the published event
