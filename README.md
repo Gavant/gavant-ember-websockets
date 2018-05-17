@@ -110,7 +110,7 @@ The most common places in the app that need to be modified to add the UUID heade
 
       //NOTE: example includes some other common headers,
       //e.g. Content-Type and authorization token from ember-simple-auth
-      headers: computed('authorizationHeaders', function () {
+      headers: computed('authorizationHeaders', 'clientIdentity.uuidHeader', function () {
           const headers = assign(
               {'Content-Type': 'application/vnd.api+json'},
               get(this, 'clientIdentity.uuidHeader'),
@@ -128,11 +128,7 @@ The most common places in the app that need to be modified to add the UUID heade
       clientIdentity: service(),
 
       makeRequest(url, data, headers = {}) {
-          assign(
-              headers,
-              get(this, 'clientIdentity.uuidHeader'),
-              {'Content-Type': 'application/x-www-form-urlencoded'}
-          );
+          assign(headers, get(this, 'clientIdentity.uuidHeader'));
 
           //rest of method implementation...
       }
