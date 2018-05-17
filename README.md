@@ -53,7 +53,7 @@ The primary service provided by the addon, it is used to make a websocket connec
 ```js
 //Basic usage example
 import Route from '@ember/routing/route';
-import { inject } from '@ember/service';
+import { inject as service } from '@ember/service';
 import { get } from '@ember/object';
 import { bind } from '@ember/runloop';
 
