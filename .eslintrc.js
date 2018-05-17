@@ -16,6 +16,10 @@ module.exports = {
   },
   rules: {
   },
+  globals: {
+    SockJS: true,
+    Stomp: true
+  },
   overrides: [
     // node files
     {
