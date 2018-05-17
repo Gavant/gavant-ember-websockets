@@ -50,6 +50,44 @@ Usage
 
 The primary service provided by the addon, it is used to make a websocket connection, and subscribe to socket channels.
 
+```js
+//Basic usage example
+import Route from '@ember/routing/route';
+import { inject } from '@ember/service';
+import { get } from '@ember/object';
+import { bind } from '@ember/runloop';
+
+export default Route.extend({
+    socket: service(),
+
+    setupController() {
+        this._super(...arguments);
+        //setup a socket channel subscription when entering a route
+        const listener = bind(this, 'onSocketEvent');
+        get(this, 'socket').subscribe('/topic/some-socket-channel', listener);
+    },
+
+    resetController(controller, isExiting) {
+        this._super(...arguments);
+
+        if(isExiting) {
+            //unsubscribe from the socket channel when leaving the route
+            get(this, 'socket').unsubscribe('/topic/some-socket-channel');
+        }
+    },
+
+    onSocketEvent(message) {
+        try {
+            //parse the socket event message body
+            const body = JSON.parse(message.body);
+            console.log(body);
+        } catch(err) {
+
+        }
+    }
+});
+```
+
 ### `ClientIdentity` Service
 
 Implements a mechanism for uniquely identifying every app instance/browser client, which can be sent in AJAX request headers to the API. The API can then return this UUID value in socket events, which the addon's `ModelSocketEventMixin` uses to ignore events that originated from the user that caused them.
@@ -60,43 +98,44 @@ The most common places in the app that need to be modified to add the UUID heade
   In your application/adapter, define a `headers` ([docs](https://emberjs.com/api/ember-data/3.1/classes/DS.RESTAdapter/properties/headers?anchor=headers)) property that includes the client UUID header:  
   ```js
   export default RESTAdapter.extend({
-    clientIdentity: service(),
-    headers: readOnly('clientIdentity.uuidHeader'),
+      clientIdentity: service(),
+      headers: readOnly('clientIdentity.uuidHeader'),
   });
   ```
 - **ember-ajax service**  
   If your application uses an `ajax` service extended from the ember-ajax addon to do custom non ember-data AJAX requests (most apps do), you will need to modify the service to include the client UUID header:  
   ```js
   export default AjaxService.extend({
-    clientIdentity: service(),
+      clientIdentity: service(),
 
-    //NOTE: example includes some other common headers,
-    //e.g. Content-Type and authorization token from ember-simple-auth
-    headers: computed('authorizationHeaders', function () {
-      const headers = assign(
-        {'Content-Type': 'application/vnd.api+json'},
-        get(this, 'clientIdentity.uuidHeader'),
-        get(this, 'authorizationHeaders')
-      );
-      return headers;
-    })
+      //NOTE: example includes some other common headers,
+      //e.g. Content-Type and authorization token from ember-simple-auth
+      headers: computed('authorizationHeaders', function () {
+          const headers = assign(
+              {'Content-Type': 'application/vnd.api+json'},
+              get(this, 'clientIdentity.uuidHeader'),
+              get(this, 'authorizationHeaders')
+          );
+
+          return headers;
+      })
   });
   ```
 - **ember-simple-auth authenticator**  
   In a custom ember-simple-auth authenticator (e.g. for OAuth 2 authentication), you will need to override the `makeRequest()` method to be able to add custom headers:
   ```js
   export default Authenticator.extend({
-    clientIdentity: service(),
+      clientIdentity: service(),
 
-    makeRequest(url, data, headers = {}) {
-      assign(
-        headers,
-        get(this, 'clientIdentity.uuidHeader'),
-        {'Content-Type': 'application/x-www-form-urlencoded'}
-      );
+      makeRequest(url, data, headers = {}) {
+          assign(
+              headers,
+              get(this, 'clientIdentity.uuidHeader'),
+              {'Content-Type': 'application/x-www-form-urlencoded'}
+          );
 
-      //rest of method implementation...
-    }
+          //rest of method implementation...
+      }
   });
   ```
 
