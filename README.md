@@ -54,9 +54,11 @@ The primary service provided by the addon, it is used to make a websocket connec
 
 Implements a mechanism for uniquely identifying every app instance/browser client, which can be sent in AJAX request headers to the API. The API can then return this UUID value in socket events, which the addon's `ModelSocketEventMixin` uses to ignore events that originated from the user that caused them.
 
-[TODO - adding to ember-data adapter, ajax service, authenticator headers]
+The most common places in the app that need to be modified to add the UUID header are:
 
-[TODO - is there a better, more global way we can add a header to ALL ajax requests, regardless of source?]
+- **ember-data adapter** [TODO]
+- **ember-ajax service** [TODO]
+- **ember-simple-auth authenticator** [TODO]
 
 ### `ApplicationRouteMixin`
 
