@@ -3,6 +3,7 @@ import { get, set, setProperties, computed } from '@ember/object';
 import { tryInvoke } from '@ember/utils';
 import { inject as service } from '@ember/service';
 import { later, cancel } from '@ember/runloop';
+import { A } from '@ember/array';
 import { Promise } from 'rsvp';
 import safeInjectService from '../macros/safe-inject-service';
 import Configuration from './../configuration';
@@ -17,7 +18,7 @@ export default Service.extend({
     baseURL: Configuration.baseURL,
     requiresAuth: Configuration.requiresAuth,
     debug: Configuration.debug,
-    reconnectDelaySteps: Configuration.reconnectDelaySteps,
+    reconnectDelaySteps: A(Configuration.reconnectDelaySteps),
 
     reconnectDelayStep: 0,
     showDisconnectAtStep: 4,

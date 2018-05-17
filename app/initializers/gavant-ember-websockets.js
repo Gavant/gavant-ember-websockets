@@ -1,6 +1,6 @@
 import { getWithDefault } from '@ember/object';
 import ENV from '../config/environment';
-import Configuration from 'ember-simple-auth/configuration';
+import Configuration from 'gavant-ember-websockets/configuration';
 
 export default {
     name: 'gavant-ember-websockets',

@@ -1,9 +1,10 @@
-import { get, getWithDefault, set } from '@ember/object';
-import { typeOf, isEmpty } from '@ember/utils';
+import { get, setProperties } from '@ember/object';
+import { isEmpty } from '@ember/utils';
+import { assign } from '@ember/polyfills';
 import { assert } from '@ember/debug';
 
 //addon configuration loading/default values
-//taken from https://github.com/simplabs/ember-simple-auth/blob/1.6.0/addon/configuration.js
+//inspired by https://github.com/simplabs/ember-simple-auth/blob/1.6.0/addon/configuration.js
 
 const DEFAULTS = {
     baseURL: '',
@@ -16,24 +17,15 @@ const DEFAULTS = {
 };
 
 export default {
-    baseURL: DEFAULTS.baseURL,
-    clientUUIDHeader: DEFAULTS.authenticationRoute,
-    globalChannel: DEFAULTS.routeAfterAuthentication,
-    modelDateField: DEFAULTS.routeIfAlreadyAuthenticated,
-    debug: DEFAULTS.debug,
-    requiresAuth: DEFAULTS.requiresAuth,
-    reconnectDelaySteps: DEFAULTS.reconnectDelaySteps,
-
     load(config) {
-        for(let property in this) {
-            if(this.hasOwnProperty(property) && typeOf(this[property]) !== 'function') {
-                set(this, property, getWithDefault(config, property, DEFAULTS[property]));
-            }
-        }
+        const configProps = assign({}, DEFAULTS, config);
+        setProperties(this, configProps);
+        this.validate();
+    },
 
-        //validate required configs are present
+    validate() {
         assert(
-            'A ENV.websockets.baseURL config must be provided for gavant-ember-websockets',
+            'An ENV.websockets.baseURL config must be provided for gavant-ember-websockets',
             !isEmpty(get(this, 'baseURL'))
         );
     }
