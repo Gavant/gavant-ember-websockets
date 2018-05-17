@@ -6,30 +6,25 @@ const mergeTrees = require('broccoli-merge-trees');
 const map = require('broccoli-stew').map;
 
 module.exports = {
-  name: 'gavant-ember-websockets',
+    name: 'gavant-ember-websockets',
 
-  treeForVendor(defaultTree) {
-        let trees = [];
+    treeForVendor() {
+        let defaultTree = this._super.treeForVendor.apply(this, arguments);
 
-        if(defaultTree) {
-            trees.push(defaultTree);
-        }
-
-        let vendorTree = new Funnel(`vendor`, {
-            files: ['sock.js', 'stomp.js'],
-            destDir: 'sock'
+        let vendorTree = new Funnel(defaultTree, {
+            destDir: 'websockets',
+            files: ['sock.js', 'stomp.js']
         });
 
         vendorTree = map(vendorTree, (content) => `if (typeof FastBoot === 'undefined') { ${content} }`);
-        trees.push(vendorTree);
 
-        return new mergeTrees(trees);
+        return new mergeTrees([defaultTree, vendorTree]);
     },
 
     included(app) {
         this._super.included.apply(this, arguments);
         // these files will be loaded in FastBoot but will not be eval'd
-        app.import('vendor/sock/sock.js');
-        app.import('vendor/sock/stomp.js');
+        app.import('vendor/websockets/sock.js');
+        app.import('vendor/websockets/stomp.js');
     }
 };

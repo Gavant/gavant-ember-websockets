@@ -35,8 +35,8 @@ export default Service.extend({
         set(this, 'subscriptions', {});
     },
 
-    host: computed('hostUrl', 'requiresAuth', 'session.data.authenticated.access_token', function() {
-        let host = get(this, 'hostUrl');
+    host: computed('baseURL', 'requiresAuth', 'session.data.authenticated.access_token', function() {
+        let host = get(this, 'baseURL');
         const token = get(this, 'session.data.authenticated.access_token');
         const requiresAuth = get(this, 'requiresAuth');
         if(requiresAuth && token) {
