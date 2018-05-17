@@ -53,6 +53,7 @@ export default Mixin.create({
             }
 
             get(this, 'eventBus').publish('websocketModelUpdate', method, modelName, modelJson, existingModel);
+            return body;
         } catch(error) {
             return reject(error);
         }
