@@ -128,7 +128,11 @@ The most common places in the app that need to be modified to add the UUID heade
       clientIdentity: service(),
 
       makeRequest(url, data, headers = {}) {
-          assign(headers, get(this, 'clientIdentity.uuidHeader'));
+          assign(
+              headers,
+              get(this, 'clientIdentity.uuidHeader'),
+              {'Content-Type': 'application/x-www-form-urlencoded'}
+          );
 
           //rest of method implementation...
       }
