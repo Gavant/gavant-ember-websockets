@@ -7,7 +7,7 @@ Installation
 ------------------------------------------------------------------------------
 
 ```
-ember install gavant-ember-websockets
+ember install @gavant/ember-websockets
 ```
 
 Add the settings below (shown with default values) to your app's config/environment.js to configure the addon. At the very least, you will need to set the `websockets.baseURL` value to point to an API endpoint URL.
