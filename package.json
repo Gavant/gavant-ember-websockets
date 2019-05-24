@@ -1,6 +1,6 @@
 {
   "name": "@gavant/ember-websockets",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Basic websockets support for ember applications.",
   "author": "Gavant Software, Inc.",
   "repository": "https://github.com/Gavant/gavant-ember-websockets",
