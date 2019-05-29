@@ -6,7 +6,7 @@ const mergeTrees = require('broccoli-merge-trees');
 const map = require('broccoli-stew').map;
 
 module.exports = {
-    name: 'gavant-ember-websockets',
+    name: '@gavant/ember-websockets',
 
     treeForVendor() {
         let defaultTree = this._super.treeForVendor.apply(this, arguments);

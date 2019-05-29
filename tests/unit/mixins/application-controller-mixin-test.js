@@ -1,5 +1,5 @@
 import EmberObject from '@ember/object';
-import ApplicationControllerMixinMixin from 'gavant-ember-websockets/mixins/application-controller-mixin';
+import ApplicationControllerMixinMixin from '@gavant/ember-websockets/mixins/application-controller-mixin';
 import { module, test } from 'qunit';
 
 module('Unit | Mixin | application-controller-mixin', function() {

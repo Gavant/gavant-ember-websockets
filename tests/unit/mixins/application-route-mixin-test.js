@@ -1,5 +1,5 @@
 import EmberObject from '@ember/object';
-import ApplicationRouteMixinMixin from 'gavant-ember-websockets/mixins/application-route-mixin';
+import ApplicationRouteMixinMixin from '@gavant/ember-websockets/mixins/application-route-mixin';
 import { module, test } from 'qunit';
 
 module('Unit | Mixin | application-route-mixin', function() {

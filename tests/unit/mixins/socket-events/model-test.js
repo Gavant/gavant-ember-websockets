@@ -1,5 +1,5 @@
 import EmberObject from '@ember/object';
-import SocketEventsModelMixin from 'gavant-ember-websockets/mixins/socket-events/model';
+import SocketEventsModelMixin from '@gavant/ember-websockets/mixins/socket-events/model';
 import { module, test } from 'qunit';
 
 module('Unit | Mixin | socket-events/model', function() {

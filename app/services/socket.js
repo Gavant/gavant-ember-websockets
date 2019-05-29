@@ -1,1 +1,1 @@
-export { default } from 'gavant-ember-websockets/services/socket';
+export { default } from '@gavant/ember-websockets/services/socket';
