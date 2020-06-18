@@ -1,0 +1,10 @@
+2020-06-18T17:09:35.461Z [warn] [addon/mixins/application-controller-mixin.js]: SKIPPED Could not find runtime data NO_RUNTIME_DATA
+2020-06-18T17:09:35.672Z [warn] [addon/mixins/socket-events/global.js]: SKIPPED Could not find runtime data NO_RUNTIME_DATA
+2020-06-18T17:09:35.764Z [warn] [addon/mixins/application-route-mixin.js]: SKIPPED Could not find runtime data NO_RUNTIME_DATA
+2020-06-18T17:09:35.858Z [warn] [addon/mixins/socket-events/model.js]: SKIPPED Could not find runtime data NO_RUNTIME_DATA
+2020-06-18T17:09:35.870Z [warn] [addon/macros/safe-inject-service.js]: SKIPPED Could not find runtime data NO_RUNTIME_DATA
+2020-06-18T17:09:35.937Z [warn] [addon/configuration.js]: SKIPPED Could not find runtime data NO_RUNTIME_DATA
+2020-06-18T17:09:35.979Z [warn] [addon/services/socket.js]: FAILURE 
+Validation errors: 
+	[reconnectDelaySteps]: Transform not supported - need option '--decorators=true' or the property type CallExpression can not be transformed
+2020-06-18T17:09:36.159Z [info] [addon/services/client-identity.js]: SUCCESS

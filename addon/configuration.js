@@ -1,4 +1,4 @@
-import { get, setProperties } from '@ember/object';
+import { setProperties } from '@ember/object';
 import { isEmpty } from '@ember/utils';
 import { assign } from '@ember/polyfills';
 import { assert } from '@ember/debug';
@@ -17,6 +17,14 @@ const DEFAULTS = {
 };
 
 export default {
+    baseURL: DEFAULTS.baseURL,
+    clientUUIDHeader: DEFAULTS.clientUUIDHeader,
+    globalChannel: DEFAULTS.globalChannel,
+    modelDateField: DEFAULTS.modelDateField,
+    debug: DEFAULTS.debug,
+    requiresAuth: DEFAULTS.requiresAuth,
+    reconnectDelaySteps: DEFAULTS.reconnectDelaySteps,
+
     load(config) {
         const configProps = assign({}, DEFAULTS, config);
         setProperties(this, configProps);
@@ -24,9 +32,6 @@ export default {
     },
 
     validate() {
-        assert(
-            'An ENV.websockets.baseURL config must be provided for gavant-ember-websockets',
-            !isEmpty(get(this, 'baseURL'))
-        );
+        assert('An ENV.websockets.baseURL config must be provided for gavant-ember-websockets', !isEmpty(this.baseURL));
     }
 };
